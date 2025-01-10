@@ -16,6 +16,7 @@ bg = pygame.image.load("asset/background_stars.png").convert()
 bg = pygame.transform.scale(bg, (W, H))
 font_family_50 = pygame.font.Font("font/Pixeltype.ttf", 50)
 font_family_120 = pygame.font.Font("font/Pixeltype.ttf", 120)
+font_family_90 = pygame.font.Font("font/Pixeltype.ttf", 90)
 
 ship = Space_ship()
 Player = pygame.sprite.GroupSingle()
@@ -65,6 +66,15 @@ while True:
 				Bullets.add(Bullet(ship.rect.midtop[0], ship.rect.top))
 			if event.type == spawn:
 				Meteorites.add(Meteorite(randint(0, W - meteorite_width), 0))
+		else:
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+				Bullets.empty()
+				Meteorites.empty()
+				Player.empty()
+				
+				ship = Space_ship()
+				Player.add(ship)
+				game_active = True
 				
 	if game_active:
 		screen.blit(bg, (0, 0))	
@@ -83,9 +93,14 @@ while True:
 		game_active = check_collide()
 	else:
 		screen.blit(bg, (0, 0))
-		you_lose_surf = font_family_120.render("YOU LOSE", True, 'WHITE')
+		you_lose_surf = font_family_120.render(f"YOUR SCORE IS {count_destroyed}", True, 'WHITE')
 		you_lose_rect = you_lose_surf.get_rect(center=(W//2, H//2))
+		
+		replay_surf = font_family_90.render("press R to replay", True, 'WHITE')
+		replay_rect = replay_surf.get_rect(center=(W//2, H//2+70))
+		
 		screen.blit(you_lose_surf, you_lose_rect)
+		screen.blit(replay_surf, replay_rect)
 	pygame.display.update()
 	clock.tick(60)
 	
