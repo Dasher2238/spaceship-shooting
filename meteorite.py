@@ -4,8 +4,12 @@ from random import randint
 class Meteorite(pygame.sprite.Sprite):
 	def __init__(self, x, y):
 		super().__init__()
-		if randint(0, 2): self.image = pygame.image.load("asset/meteor.png").convert_alpha()
-		else: self.image = pygame.image.load("asset/flaming_meteor.png").convert_alpha()
+		if randint(0, 2): 
+			self.image = pygame.image.load("asset/meteor.png").convert_alpha()
+			self.velocity = 3
+		else: 
+			self.image = pygame.image.load("asset/flaming_meteor.png").convert_alpha()
+			self.velocity = 4
 		self.image = pygame.transform.scale2x(self.image)
 		
 		self.explosion = pygame.image.load("asset/explosion.png").convert_alpha()
@@ -14,7 +18,6 @@ class Meteorite(pygame.sprite.Sprite):
 		self.destroyed = False
 		
 		self.rect = self.image.get_rect(topleft=(x, y))
-		self.velocity = randint(3, 4)
 		self.width = self.image.get_width()
 	
 	def destroy(self):

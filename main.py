@@ -37,6 +37,8 @@ meteorite_width = Meteorite(0, 0).width
 
 game_active = True
 
+game_start = False
+
 count_destroyed = 0
 
 def check_collide():
@@ -57,50 +59,64 @@ def score_display(screen, count_destroyed):
 	screen.blit(score_surf, score_rect)
 
 while True:
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			pygame.quit()
-			exit()
+	if game_start:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				exit()
+			if game_active:
+				if event.type == shoot:
+					Bullets.add(Bullet(ship.rect.midtop[0], ship.rect.top))
+				if event.type == spawn:
+					Meteorites.add(Meteorite(randint(0, W - meteorite_width), 0))
+			else:
+				if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+					Bullets.empty()
+					Meteorites.empty()
+					Player.empty()
+					
+					ship = Space_ship()
+					Player.add(ship)
+					game_active = True
+					
 		if game_active:
-			if event.type == shoot:
-				Bullets.add(Bullet(ship.rect.midtop[0], ship.rect.top))
-			if event.type == spawn:
-				Meteorites.add(Meteorite(randint(0, W - meteorite_width), 0))
+			screen.blit(bg, (0, 0))	
+			
+			Player.draw(screen)
+			Player.update()
+			
+			Bullets.draw(screen)
+			Bullets.update()
+			
+			Meteorites.draw(screen)
+			Meteorites.update()
+			
+			score_display(screen, count_destroyed)
+			
+			game_active = check_collide()
 		else:
-			if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
-				Bullets.empty()
-				Meteorites.empty()
-				Player.empty()
-				
-				ship = Space_ship()
-				Player.add(ship)
-				game_active = True
-				
-	if game_active:
-		screen.blit(bg, (0, 0))	
-		
-		Player.draw(screen)
-		Player.update()
-		
-		Bullets.draw(screen)
-		Bullets.update()
-		
-		Meteorites.draw(screen)
-		Meteorites.update()
-		
-		score_display(screen, count_destroyed)
-		
-		game_active = check_collide()
+			screen.blit(bg, (0, 0))
+			you_lose_surf = font_family_120.render(f"YOUR SCORE IS {count_destroyed}", True, 'WHITE')
+			you_lose_rect = you_lose_surf.get_rect(center=(W//2, H//2))
+			
+			replay_surf = font_family_90.render("press R to replay", True, 'WHITE')
+			replay_rect = replay_surf.get_rect(center=(W//2, H//2+70))
+			
+			screen.blit(you_lose_surf, you_lose_rect)
+			screen.blit(replay_surf, replay_rect)
 	else:
 		screen.blit(bg, (0, 0))
-		you_lose_surf = font_family_120.render(f"YOUR SCORE IS {count_destroyed}", True, 'WHITE')
-		you_lose_rect = you_lose_surf.get_rect(center=(W//2, H//2))
+		start_button_surf = pygame.image.load("asset/start_button.png").convert_alpha()
+		start_button_rect = start_button_surf.get_rect(center=(W//2, H//2))
+		screen.blit(start_button_surf, start_button_rect)
 		
-		replay_surf = font_family_90.render("press R to replay", True, 'WHITE')
-		replay_rect = replay_surf.get_rect(center=(W//2, H//2+70))
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				exit()
+			if event.type == pygame.MOUSEBUTTONDOWN and start_button_rect.collidepoint(event.pos):
+				game_start = True
 		
-		screen.blit(you_lose_surf, you_lose_rect)
-		screen.blit(replay_surf, replay_rect)
 	pygame.display.update()
 	clock.tick(60)
 	
