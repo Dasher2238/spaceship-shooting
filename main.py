@@ -41,6 +41,7 @@ game_start = False
 
 count_destroyed = 0
 
+# check collision
 def check_collide():
 	global count_destroyed
 	for Bullet in Bullets:
@@ -52,28 +53,33 @@ def check_collide():
 	if pygame.sprite.spritecollide(Player.sprite, Meteorites, True):
 		return False
 	return True
-	
+
+# show current count of destroyed meteorites
 def score_display(screen, count_destroyed):
 	score_surf = font_family_50.render(f"Score : {count_destroyed}", False, 'WHITE')
 	score_rect = score_surf.get_rect(topleft=(15, 15))
 	screen.blit(score_surf, score_rect)
 
+# main logic of the game
 while True:
 	if game_start:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				exit()
+			# spawn bullets and meteorites
 			if game_active:
 				if event.type == shoot:
 					Bullets.add(Bullet(ship.rect.midtop[0], ship.rect.top))
 				if event.type == spawn:
 					Meteorites.add(Meteorite(randint(0, W - meteorite_width), 0))
 			else:
+				# reset game
 				if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
 					Bullets.empty()
 					Meteorites.empty()
 					Player.empty()
+					count_destroyed = 0
 					
 					ship = Space_ship()
 					Player.add(ship)
@@ -95,6 +101,7 @@ while True:
 			
 			game_active = check_collide()
 		else:
+			# restart menu
 			screen.blit(bg, (0, 0))
 			you_lose_surf = font_family_120.render(f"YOUR SCORE IS {count_destroyed}", True, 'WHITE')
 			you_lose_rect = you_lose_surf.get_rect(center=(W//2, H//2))
@@ -105,6 +112,8 @@ while True:
 			screen.blit(you_lose_surf, you_lose_rect)
 			screen.blit(replay_surf, replay_rect)
 	else:
+		
+		# start menu
 		screen.blit(bg, (0, 0))
 		start_button_surf = pygame.image.load("asset/start_button.png").convert_alpha()
 		start_button_rect = start_button_surf.get_rect(center=(W//2, H//2))
