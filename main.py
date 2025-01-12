@@ -53,7 +53,7 @@ def check_collide():
 		return False
 	return True
 
-# show current count of destroyed meteorites
+# show current score
 def score_display(screen, score):
 	score_surf = font_family_50.render(f"Score : {score}", False, 'WHITE')
 	score_rect = score_surf.get_rect(topleft=(15, 15))
